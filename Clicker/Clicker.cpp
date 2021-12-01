@@ -26,6 +26,7 @@ HWND curcps;
 HWND timer;
 HWND progress;
 BOOL isStart = FALSE;
+BOOL isWin = FALSE;
 long ds;
 long cur_clicks = 0;
 long cps_clicks = 0;
@@ -49,7 +50,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(lpCmdLine);
 
     // TODO: Place code here.
-
+    
+    
     // Initialize global strings
     LoadStringW(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
     LoadStringW(hInstance, IDC_CLICKER, szWindowClass, MAX_LOADSTRING);
@@ -194,6 +196,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SendMessageW(progress, PBM_DELTAPOS, -1, 0);
             int pos = SendMessageW(progress, PBM_GETPOS, 0, 0);
             SendMessageW(progress, PBM_SETBARCOLOR, 0, RGB(250-pos, 150+pos, 200));
+            if (SendMessageW(progress, PBM_GETPOS, 0, 0) == 99 && isWin == FALSE)
+            {
+                isWin = TRUE;
+                KillTimer(hWnd, TIMER_CLOCK);
+                MessageBoxW(NULL, L"YOU WIN", L"CLICKER", MB_OK);
+
+            }
             ds+=1;
             
             
@@ -209,7 +218,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         
         if (isStart == TRUE)
         {
-            SendMessageW(progress, PBM_DELTAPOS, 2, 0);
+            SendMessageW(progress, PBM_DELTAPOS, 5, 0);
             cur_clicks += 1;
             t = GetTickCount64();
             _snwprintf_s(str, MAX_LOADSTRING, L"%.1f", 1000.0f / (t - prev_t));
