@@ -209,7 +209,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         
         if (isStart == TRUE)
         {
-            SendMessageW(progress, PBM_DELTAPOS, 5, 0);
+            SendMessageW(progress, PBM_DELTAPOS, 2, 0);
             cur_clicks += 1;
             t = GetTickCount64();
             _snwprintf_s(str, MAX_LOADSTRING, L"%.1f", 1000.0f / (t - prev_t));
