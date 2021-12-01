@@ -39,7 +39,6 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-void CPS();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
@@ -196,21 +195,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             SendMessageW(progress, PBM_DELTAPOS, -1, 0);
             int pos = SendMessageW(progress, PBM_GETPOS, 0, 0);
             SendMessageW(progress, PBM_SETBARCOLOR, 0, RGB(250-pos, 150+pos, 200));
-            if (SendMessageW(progress, PBM_GETPOS, 0, 0) == 99 && isWin == FALSE)
-            {
-                isWin = TRUE;
-                KillTimer(hWnd, TIMER_CLOCK);
-                MessageBoxW(NULL, L"YOU WIN", L"CLICKER", MB_OK);
-
-            }
-            ds+=1;
             
-            
+            ds += 1;
             _snwprintf_s(str, MAX_LOADSTRING, L"%02d:%02d.%d",
                 ds / 600,
                 (ds % 600) / 10,
                 ds % 10);
             SendMessageW(timer, WM_SETTEXT, 0, (LPARAM)str);
+            if (SendMessageW(progress, PBM_GETPOS, 0, 0) == 99 && isWin == FALSE)
+            {
+                isWin = TRUE;
+                KillTimer(hWnd, TIMER_CLOCK);
+                int answer = MessageBoxW(NULL, L"YOU WIN", L"CLICKER", MB_OK);
+                if (answer == IDOK)
+                {
+                    isWin = FALSE;
+                    SendMessageW(progress, PBM_SETPOS, 50, 0);
+                    ds = 0;
+                    cps_clicks = 0;
+                    cur_clicks = 0;
+                    _itow_s(cps_clicks, str, 10);
+                    SendMessageW(curcpsDigit, WM_SETTEXT, 100, (LPARAM)str);
+                    SendMessageW(maxcpsDigit, WM_SETTEXT, 100, (LPARAM)str);
+                    _itow_s(cur_clicks, str, 10);
+                    SendMessageW(totalDigit, WM_SETTEXT, 100, (LPARAM)str);
+
+                    _snwprintf_s(str, MAX_LOADSTRING, L"%02d:%02d.%d",
+                        ds / 600,
+                        (ds % 600) / 10,
+                        ds % 10);
+                    SendMessageW(timer, WM_SETTEXT, 0, (LPARAM)str);
+                }
+            }
         }
         break;
     }
@@ -235,6 +251,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         
         break;
     }
+
     case WM_COMMAND:
     {
         int wmId = LOWORD(wParam);
@@ -253,6 +270,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case IDM_EXIT:
             DestroyWindow(hWnd);
             break;
+        case IDOK:
+            
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
         }
@@ -293,8 +312,4 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
-}
-
-void CPS() {
-    
 }
