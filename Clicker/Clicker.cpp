@@ -210,6 +210,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (answer == IDOK)
                 {
                     isWin = FALSE;
+                    isStart = FALSE;
                     SendMessageW(progress, PBM_SETPOS, 50, 0);
                     ds = 0;
                     cps_clicks = 0;
